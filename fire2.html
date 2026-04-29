@@ -80,7 +80,7 @@
             color: #000;
         }
 
-        /* 第1页装饰图（补充位置） */
+        /* 第1页装饰图 */
         #section-1 .section-image {
             position: absolute;
             z-index: 1;
@@ -106,7 +106,7 @@
         /* 第4页 */
         #section-4 .text2 {
             position: absolute;
-            top: 750px;           /* 从894px上移，防止超出屏幕 */
+            top: 750px;        
             right: 100px;
             width: 576px;
             font-size: 32px;
@@ -164,7 +164,7 @@
             z-index: 0;        
         }
 
-        /* 第5页补充装饰图样式 */
+        /* 第5页 */
         #section-5 .section-image {
             position: absolute;
             z-index: 0;
@@ -254,7 +254,6 @@
             }
         });
 
-        // 最后一页下滑跳转，增加防抖
         let wheelTimer;
         window.addEventListener('wheel', (e) => {
             if (currentSection === totalSections - 1 && e.deltaY > 0) {
