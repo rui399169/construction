@@ -13,7 +13,7 @@
         html, body {
             width: 100%;
             height: 100%;
-            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", sans-serif;
+            font-family: "FZXiaoBiaoSong-B05S";
             overflow: hidden;
             background-color: #ffffff;
         }
@@ -42,7 +42,7 @@
             transition: opacity 0.6s linear, visibility 0s 0s;
         }
 
-        /* 场景1背景 */
+        /* 场景1 */
         #scene1::before {
             content: '';
             position: absolute;
@@ -61,7 +61,7 @@
             align-items: center;
         }
 
-        /* 场景2：视频背景 */
+        /* 场景2 */
         #scene2 .video-bg {
             position: absolute;
             top: 0; left: 0;
@@ -80,7 +80,7 @@
             padding: 0 40px;
         }
 
-        /* 场景1文字 */
+        /* 场景1 */
         .title {
             color: #363131;
             font-size: 50px;
@@ -103,7 +103,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- 场景1：水患概述 -->
+        <!-- 场景1 -->
         <div id="scene1" class="scene active">
             <div class="content">
                 <p class="title">水患与潮气，古建筑的持久考验</p>
@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        <!-- 场景2：视频步骤 -->
+        <!-- 场景2 -->
         <div id="scene2" class="scene">
             <video class="video-bg" id="video1" src="算盘.mp4" muted playsinline preload="auto"></video>
             <video class="video-bg" id="video2" src="时间.mp4" muted playsinline preload="auto" style="display:none;"></video>
