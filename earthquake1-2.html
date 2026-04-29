@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>营造有道 | 御灾有术 · 地震时间轴</title>
+    <title>营造有道 | 御灾有术</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             width: 100%; height: 100%;
-            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-family: "FZXiaoBiaoSong-B05S";
             background-color: #F5F1EB;
             overflow: hidden;
         }
@@ -157,7 +157,7 @@
             pointer-events: auto;
         }
 
-        /* 定位标（位置由JS动态调整） */
+        /* 定位标 */
         .marker-wrapper {
             position: absolute;
             left: 50px; top: 200px;
@@ -198,7 +198,7 @@
             transform: translateX(-50%);
         }
 
-        /* 组合（位置由JS动态调整） */
+        /* 组合 */
         .combo {
             position: absolute;
             top: -8px;
@@ -236,7 +236,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* ========== 卡片内部样式（已优化） ========== */
+        /* 卡片内部样式*/
         .frame5 { position: relative; width: 582px; height: 691px; }
         .rectangle141 {
             position: absolute; top: 0; left: 3px;
@@ -244,7 +244,7 @@
             border: 1px solid #ccbeb5;
             box-shadow: 0px 16px 25px -5px rgba(0,0,0,0.25);
             background: rgba(233,228,213,0.9);
-            padding: 40px 45px 273px 45px;   /* 优化 */
+            padding: 40px 45px 273px 45px;  
             width: 577px; height: 691px;
         }
         .autoWrapper3 { display: flex; align-items: flex-start; justify-content: space-between; padding-right: 7px; }
@@ -253,28 +253,28 @@
             position: absolute; top: -46px; left: 0;
             display: flex; align-items: center;
             width: 500px; height: 54px; color: #363131;
-            font-size: 44px;   /* 优化 */
+            font-size: 44px;  
         }
         .autoWrapper .text2 {
             position: absolute; top: 0; left: 0;
             display: flex; align-items: center;
             width: 286px; height: 54px; color: rgba(54,49,49,0.55);
-            font-size: 15px;   /* 优化 */
-        }
+            font-size: 15px; 
+            
         .autoWrapper2 { position: relative; width: 186px; height: 54px; margin-top: 54px; }
         .aMagnitude {
             position: absolute; bottom: -54px; left: 71px;
             display: flex; align-items: center; justify-content: flex-end;
             width: 115px; height: 54px; color: rgba(54,49,49,0.55);
             font-family: "Roboto Mono", sans-serif;
-            font-size: 14px;   /* 优化 */
+            font-size: 14px;   
         }
         .m70 {
             position: absolute; top: 0; left: 0;
             display: flex; align-items: center; justify-content: flex-end;
             width: 186px; height: 54px; color: #a32727;
             font-family: "Roboto Mono", sans-serif;
-            font-size: 60px;   /* 优化 */
+            font-size: 60px;   
             font-weight: 500;
         }
         .vector36 { margin-top: 5px; margin-left: 3px; background: #c4b9b9; width: 491px; height: 1px; }
@@ -284,7 +284,7 @@
             display: flex; align-items: center;
             width: 115px; height: 54px; color: rgba(54,49,49,0.55);
             font-family: "Roboto Mono", sans-serif;
-            font-size: 14px;   /* 优化 */
+            font-size: 14px;   
         }
         .text3 {
             position: absolute; top: 0; left: 0;
@@ -308,8 +308,8 @@
             display: flex; align-items: center;
             margin: 28px 0px 0px 6px; width: 488px; height: 45px;
             color: #5f5955;
-            font-size: 16px;   /* 优化 */
-            line-height: 26px; /* 优化 */
+            font-size: 16px;   
+            line-height: 26px; 
         }
         .autoWrapper5 { position: relative; margin-top: 40px; width: 312px; height: 54px; }
         .autoWrapper5 .text3 { color: #363131; font-size: 24px; }
@@ -322,8 +322,8 @@
             position: absolute; top: 17px; left: 24px;
             display: flex; align-items: flex-start;
             width: 447px; height: 202px; color: rgba(0,0,0,0.59);
-            font-size: 15px;   /* 优化 */
-            line-height: 26px; /* 优化 */
+            font-size: 15px;   
+            line-height: 26px; 
             overflow-y: auto;
         }
         .corner-top-left {
@@ -435,7 +435,7 @@
     </div>
 
     <script>
-        // ========== 地震数据（含独立位置参数） ==========
+        // ========== 地震数据 ==========
         const eventData = {
             qishan: {
                 title: "岐山地震",
@@ -528,7 +528,7 @@
             comboContainer.style.top = (data.comboTop || -8) + 'px';
             comboContainer.style.left = (data.comboLeft || 160) + 'px';
 
-            // 动态朝代判断
+            // 朝代
             const dynasty = 
                 data.title.includes('洪洞') ? '元' : 
                 data.title.includes('华县') ? '明' : 
@@ -587,7 +587,7 @@
             });
         });
 
-        // 滚轮交互：向上回 earthquake1.html，向下或时间轴底部跳转到 earthquake2.html
+        // 滚轮交互
         window.addEventListener('wheel', function(e) {
             const isInScroll = scrollContainer.contains(e.target);
             const detailVisible = detailContainer.classList.contains('visible');
