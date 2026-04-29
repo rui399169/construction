@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火灾篇 - 消防灭火</title>
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+        body {
+            font-family: "FZXiaoBiaoSong-B05S";
+            overflow: hidden; background: #fff;
+        }
+        .container {
+            position: relative; width: 100vw; height: 100vh;
+        }
+        .scene {
+            position: absolute; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: #fff;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0s 0.5s;
+            overflow: hidden;
+        }
+        .scene.active {
+            opacity: 1; visibility: visible;
+            transition: opacity 0.5s ease, visibility 0s 0s;
+        }
+        .background {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: 0;
+        }
+        .content {
+            position: relative; z-index: 1;
+            width: 100%; height: 100%;
+        }
+
+        .fade-in { opacity: 0; transition: opacity 0.8s ease; }
+        .fade-in.active { opacity: 1; }
+
+        /* 场景1 */
+        #scene1 .text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px; text-align: center; color: #000;
+        }
+
+        /* 场景2 */
+        #scene2 .title {
+            position: absolute; top: 50px; left: 40px;
+            font-size: 52px; color: #000;
+        }
+        #scene2 .subtitle {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px; text-align: center; color: #000; max-width: 80%;
+        }
+        #scene2 .start-btn {
+            position: absolute; bottom: 200px; left: 50%;
+            transform: translateX(-50%);
+            padding: 20px 80px; background: #d8cbba; border: none;
+            border-radius: 64px; font-size: 32px; color: #000;
+            cursor: pointer; box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+            transition: transform 0.3s;
+        }
+        #scene2 .start-btn:hover { transform: translateX(-50%) scale(1.05); }
+
+        /* 场景3、4 */
+        #scene3 .text, #scene4 .text {
+            position: absolute; top: 50%; left: 800px;
+            transform: translate(-50%, -50%);
+            font-size: 40px; line-height: 1.5; color: #000; max-width: 80%;
+        }
+
+        /* 场景5 可点击元素 */
+        .interactive-element {
+            position: absolute; cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .interactive-element:hover { transform: scale(1.05); }
+        #image18 { top: 263px; left: 378px; width: 350px; }
+        #image17 { top: 230px; left: 800px; width: 400px; }
+        #image24 { top: 300px; left: 150px; width: 300px; }
+        #image23 { top: 678px; left: 600px; width: 400px; }
+        #image16 { top: 129px; left: 1300px; width: 319px; height: 319px; }
+
+        /* 场景10 结局文字 */
+        #scene10 .text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px; line-height: 1.5; color: #000; max-width: 2000px; text-align: center;width:1500px;
+        }
+
+        /* ========== 底部返回组件 ========== */
+        .group161 {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 1050px;
+            height: 91px;
+            z-index: 30;
+        }
+        .vector33 {
+            margin-top: 46px;
+            width: 556px;
+            height: 1px;
+            background-image: linear-gradient(90deg,
+                rgba(113,108,108,0.15) 0%,
+                rgba(111,96,96,0.375) 33.65%,
+                rgba(107,75,75,1) 100%);
+        }
+        .rectangle134 {
+            display: flex;
+            align-items: center;
+            border: 1px solid #716c6c;
+            padding: 7px;
+        }
+        .rectangle132 {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            box-shadow: 0 4px 4px rgba(103,92,92,0.25);
+            background: #8c8686;
+            padding: 11px;
+            cursor: pointer;
+            transition: transform 0.6s ease;
+        }
+        .rectangle132:hover { transform: rotate(180deg); }
+        .rectangle132 .btn-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 53px; height: 53px;
+            line-height: 80px;
+            letter-spacing: 0;
+            color: #fff;
+            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 36px;
+            margin: 0;
+            transition: transform 0.6s ease;
+        }
+        .rectangle132:hover .btn-text { transform: rotate(-180deg); }
+        .vector34 {
+            margin-top: 46px;
+            width: 556px;
+            height: 1px;
+            transform: rotate(180deg);
+            background-image: linear-gradient(90deg,
+                rgba(113,108,108,0.15) 0%,
+                rgba(111,96,96,0.375) 33.65%,
+                rgba(107,75,75,1) 100%);
+        }
+
+        /* 弹窗通用 */
+        .popup {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .popup.active {
+            opacity: 1; visibility: visible;
+        }
+       .popup-content {
+            background: #e4d8c4;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+            max-width: 70%;
+            max-height: 80%;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 30px;
+        }
+        .popup-content .popup-image {
+            width: auto;
+            max-width: 50%;
+            max-height: 450px;
+            height: auto;
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+        .popup-content .popup-text {
+            flex: 1;
+            font-size: 24px;
+            line-height: 1.5;
+            color: #000;
+        }
+        .detail-popup .popup-content {
+            max-width: 75%;
+        }
+        .popup-content .popup-btn {
+            margin-top: 20px; padding: 10px 30px;
+            background: #d8cbba; border: none; border-radius: 4px;
+            font-size: 32px; color: #000; cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .popup-content .popup-btn:hover { transform: scale(1.05); }
+        .popup-content .close-btn {
+            position: absolute; top: 10px; right: 20px;
+            background: none; border: none; font-size: 32px;
+            cursor: pointer; color: #000;
+        }
+        .detail-popup .popup-content {
+            max-width: 90%; max-height: 90%;
+        }
+
+        /* 悬浮弹窗不拦截点击 */
+        #popup1, #popup2, #popup3, #popup4, #popup5 {
+            pointer-events: none;
+        }
+        #popup1 .popup-btn, #popup2 .popup-btn, #popup3 .popup-btn, #popup4 .popup-btn, #popup5 .popup-btn {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 场景1 -->
+    <div id="scene1" class="scene active">
+        <img src="火灾背景6.png" class="background">
+        <div class="content">
+            <div class="text fade-in">关卡三：消防灭火</div>
+        </div>
+    </div>
+
+    <!-- 场景2 -->
+    <div id="scene2" class="scene">
+        <img src="火灾背景7.png" class="background">
+        <div class="content">
+            <div class="title fade-in">关卡三：消防灭火</div>
+            <div class="subtitle fade-in">
+                <span style="font-size: 64px;">「临安火政录」</span><br>
+                您是南宋淳祐年间临安城新任火政官<br>
+                请完成全城火政核验，守护临安城平安
+            </div>
+            <button class="start-btn fade-in" onclick="goToScene(2)">开始巡查</button>
+        </div>
+    </div>
+
+    <!-- 场景3 -->
+    <div id="scene3" class="scene">
+        <img src="火灾背景8.png" class="background">
+        <div class="content">
+            <div class="text fade-in">
+                临安城为行在之都，人烟稠密，屋宇相连，寸土寸金，
+                偏偏民居多为木构，一旦走水，便是火烧连营的大祸。
+            </div>
+        </div>
+    </div>
+
+    <!-- 场景4 -->
+    <div id="scene4" class="scene">
+        <img src="火灾背景8.png" class="background">
+        <div class="content">
+            <div class="text fade-in">
+                临安城为行在之都，人烟稠密，屋宇相连，寸土寸金，
+                偏偏民居多为木构，一旦走水，便是火烧连营的大祸。
+                <br><br>
+                今日是你上任的第一日，需亲自巡查全城六大防火体系，核验值守、器具、设施是否完备，绝不能留半分火患。
+            </div>
+        </div>
+    </div>
+
+    <!-- 场景5（交互核心） -->
+    <div id="scene5" class="scene">
+        <img src="火灾背景9.png" class="background">
+        <div class="content">
+            <div class="interactive-element" id="image18"
+                 onmouseover="showPopup('popup1')" onmouseout="hidePopup('popup1')"
+                 onclick="toggleDetail('popup1', 'detail6', 'image18')">
+                <img src="楼1.png" style="width:100%;height:100%;">
+            </div>
+            <div class="interactive-element" id="image17"
+                 onmouseover="showPopup('popup2')" onmouseout="hidePopup('popup2')"
+                 onclick="toggleDetail('popup2', 'detail7', 'image17')">
+                <img src="楼3.png" style="width:100%;height:100%;">
+            </div>
+            <div class="interactive-element" id="image24"
+                 onmouseover="showPopup('popup3')" onmouseout="hidePopup('popup3')"
+                 onclick="toggleDetail('popup3', 'detail8', 'image24')">
+                <img src="缸.png" style="width:100%;height:100%;">
+            </div>
+            <div class="interactive-element" id="image23"
+                 onmouseover="showPopup('popup4')" onmouseout="hidePopup('popup4')"
+                 onclick="toggleDetail('popup4', 'detail9', 'image23')">
+                <img src="井.png" style="width:100%;height:100%;">
+            </div>
+            <div class="interactive-element" id="image16"
+                 onmouseover="showPopup('popup5')" onmouseout="hidePopup('popup5')"
+                 onclick="toggleDetail('popup5', 'detail20', 'image16')">
+                <img src="楼4.png" style="width:100%;height:100%;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 场景10（结局） -->
+    <div id="scene10" class="scene">
+        <img src="火灾背景8.png" class="background">
+        <div class="content">
+            <div class="text fade-in">
+                【结局：临安无虞】<br>
+                你已完成临安城全部 6 大防火体系的巡查，<br>全城火政井然，值守到位，器具完备，水源充足，隐患尽除。<br>
+                这一年，临安城未发生一起大型火灾，<br>
+                百姓安居乐业，皆称颂你为「临安防火第一人」，<br>
+                你的名字，也随宋代完善的消防体系，一同载入史册。
+            </div>
+            <div class="group161">
+                <div class="vector33"></div>
+                <div class="rectangle134">
+                    <div class="rectangle132" onclick="window.location.href='page3.html'">
+                        <p class="btn-text">返</p>
+                    </div>
+                </div>
+                <div class="vector34"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮弹窗（简要信息，无按钮） -->
+    <div class="popup" id="popup1">
+        <div class="popup-content">
+            <img src="楼1-1.png" class="popup-image">
+            <div class="popup-text">
+                核心原理：配套专用灭火器具，形成标准化装备体系，覆盖登高、破拆、喷水、扑火全场景，是古代消防队伍的核心作战装备。<br><br>
+                核心应用于北宋东京汴梁军巡铺、南宋临安潜火队，核心工具包括水袋、水囊、溅筒、麻搭、云梯、火叉等，宋代《武经总要》有完整记载与形制规范。
+            </div>
+        </div>
+    </div>
+    <div class="popup" id="popup2">
+        <div class="popup-content">
+            <img src="楼3-1.png" class="popup-image">
+            <div class="popup-text">
+                核心原理：建立夜间巡警、专职消防队伍，形成「巡查 - 预警 - 处置」全流程，是世界上最早的专职公共消防体系雏形。<br><br>
+                南宋临安防隅巡警体系：设置专门潜火队，为专职消防队伍，配备全套灭火器具，火情发生时即刻赶赴处置。
+            </div>
+        </div>
+    </div>
+    <div class="popup" id="popup3">
+        <div class="popup-content">
+            <img src="缸1.png" class="popup-image">
+            <div class="popup-text">
+                核心原理：建筑周边设置大容量储水容器，全天候备水，就近灭火，实现火情初起时的快速处置，是建筑防火的第一道防线。<br><br>
+                北京故宫太平缸：清代鼎盛时期设 308 尊，每缸可储水 3000 余升，冬季设专人保温防冻，确保全年可用。
+            </div>
+        </div>
+    </div>
+    <div class="popup" id="popup4">
+        <div class="popup-content">
+            <img src="井1.png" class="popup-image">
+            <div class="popup-text">
+                核心原理：开凿水井、河渠，构建全城消防水源网络，为火灾扑救提供核心供水保障，是古代城市消防体系的基础。<br><br>
+                汉代「东井灭火」陶井：河南博物院藏，为汉代水井灭火功能的实证。   
+            </div>
+        </div>
+    </div>
+    <div class="popup" id="popup5">
+        <div class="popup-content">
+            <img src="楼4-2.png" class="popup-image">
+            <div class="popup-text">
+                核心原理：高处建造专用瞭望建筑，专人 24 小时值守，以旗帜、灯光、鸣钟示警，联动消防队伍，是古代城市火灾预警的核心枢纽。<br><br>
+                南宋临安城望火楼：全城设 10 余座，形成全覆盖预警网络。
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="popup detail-popup" id="detail6">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closeDetail('detail6')">✕</button>
+            <img src="云梯.png" class="popup-image">
+            <div class="popup-text">
+                【军器库管事逐一演示器具】大人请看！这是云梯，可登高破拆、上屋灭火；这是溅筒，以大竹打通关节，灌水其中，可喷水灭远火；这是麻搭、火叉，可近距离扑打明火；还有水袋、水囊，用牛马皮制成，可运水奔袭，一应器具，《武经总要》里都有定规，潜火队人人熟用！
+            </div>
+        </div>
+    </div>
+    <div class="popup detail-popup" id="detail7">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closeDetail('detail7')">✕</button>
+            <img src="小兵.png" class="popup-image">
+            <div class="popup-text">
+                【潜火队队长率队行礼】大人！我等为临安城专职潜火队，全城每三百步设一处军巡铺，每铺配铺兵五人，
+日夜沿街巡防，严查夜间火禁，一旦闻钟示警，即刻携全套器具奔赴火场，拆障、灭火、救人，一应职责绝不含糊！
+            </div>
+        </div>
+    </div>
+    <div class="popup detail-popup" id="detail8">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closeDetail('detail8')">✕</button>
+            <img src="小兵.png" class="popup-image">
+            <div class="popup-text">
+                【官衙管事上前回话】大人，这太平缸是官衙、民居防火的第一道关口！这一口缸便能储水三十石，每日都有专人换水满缸，冬季还要裹棉、烧炭防冻，确保一年四季缸水满溢，一旦有小火情，随手就能取水扑灭，绝不让小火酿成大祸。
+            </div>
+        </div>
+    </div>
+    <div class="popup detail-popup" id="detail9">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closeDetail('detail9')">✕</button>
+            <img src="小兵.png" class="popup-image">
+            <div class="popup-text">
+                【城中里正上前回话】大人，此井为临安城专用消防水源井，深三丈，四季不竭，像这样的水井，
+全城街巷共设二十余处，再加上城外西湖、城内运河，织成了一张全覆盖的水源网，一旦起火，随处都能取水救火！
+            </div>
+        </div>
+    </div>
+
+    <div class="popup detail-popup" id="detail20">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closeDetail('detail20')">✕</button>
+            <img src="小兵.png" class="popup-image">
+            <div class="popup-text">
+                【望楼兵卒举手示意】大人，此处为全城最高望火楼，我等二人轮流站立，但凡见一丝烟火，白日挥旗、夜间举灯，同时敲响铜钟，指向起火方向，全城军巡铺即刻响应！
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const scenes = document.querySelectorAll('.scene');
+    const totalScenes = scenes.length;
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let anyPopupOpen = false;
+
+    const requiredElements = ['image18','image17','image24','image23','image16'];
+    let clickedElements = new Set();
+
+    function goToScene(index) {
+        if (index === currentIndex || isTransitioning || index < 0 || index >= totalScenes) return;
+        if (anyPopupOpen) return;
+        isTransitioning = true;
+        scenes[currentIndex].classList.remove('active');
+        scenes[index].classList.add('active');
+        const newScene = scenes[index];
+        newScene.querySelectorAll('.fade-in').forEach(el => el.classList.add('active'));
+        currentIndex = index;
+        setTimeout(() => { isTransitioning = false; }, 500);
+    }
+
+    window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (anyPopupOpen) return;
+        const isDown = e.deltaY > 0;
+
+        if (currentIndex === 0) { if (isDown) goToScene(1); }
+        else if (currentIndex === 1) { if (!isDown) goToScene(0); }
+        else if (currentIndex === 2) { if (isDown) goToScene(3); }
+        else if (currentIndex === 3) { if (isDown) goToScene(4); else goToScene(2); }
+        else if (currentIndex === 4) {
+            if (isDown && allRequiredClicked()) goToScene(5);
+            else if (!isDown) goToScene(3);
+        }
+        else if (currentIndex === 5) { if (!isDown) goToScene(4); }
+    }, { passive: false });
+
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: false });
+    window.addEventListener('touchend', (e) => {
+        if (anyPopupOpen) return;
+        const diff = touchStartY - e.changedTouches[0].clientY;
+        if (Math.abs(diff) < 30) return;
+        const isDown = diff > 0;
+
+        if (currentIndex === 0) { if (isDown) goToScene(1); }
+        else if (currentIndex === 1) { if (!isDown) goToScene(0); }
+        else if (currentIndex === 2) { if (isDown) goToScene(3); }
+        else if (currentIndex === 3) { if (isDown) goToScene(4); else goToScene(2); }
+        else if (currentIndex === 4) {
+            if (isDown && allRequiredClicked()) goToScene(5);
+            else if (!isDown) goToScene(3);
+        }
+        else if (currentIndex === 5) { if (!isDown) goToScene(4); }
+    });
+
+    function showPopup(id) {
+        const el = document.getElementById(id);
+        if (el) { el.classList.add('active'); anyPopupOpen = true; }
+    }
+    function hidePopup(id) {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('active'); anyPopupOpen = checkAnyPopupOpen(); }
+    }
+    function checkAnyPopupOpen() {
+        return Array.from(document.querySelectorAll('.popup')).some(p => p.classList.contains('active'));
+    }
+
+    function toggleDetail(popupId, detailId, elementId) {
+        const detail = document.getElementById(detailId);
+        hidePopup(popupId);
+        if (detail && detail.classList.contains('active')) {
+            detail.classList.remove('active');
+            anyPopupOpen = checkAnyPopupOpen();
+        } else {
+            document.querySelectorAll('.popup').forEach(p => p.classList.remove('active'));
+            if (detail) {
+                detail.classList.add('active');
+                anyPopupOpen = true;
+                if (elementId) clickedElements.add(elementId);
+            }
+        }
+    }
+
+    function closeDetail(detailId) {
+        const detail = document.getElementById(detailId);
+        if (detail) detail.classList.remove('active');
+        anyPopupOpen = checkAnyPopupOpen();
+    }
+
+    function allRequiredClicked() {
+        return requiredElements.every(id => clickedElements.has(id));
+    }
+
+    window.addEventListener('load', () => {
+        document.querySelector('#scene1 .fade-in')?.classList.add('active');
+    });
+
+    document.querySelector('#scene2 .start-btn').addEventListener('click', () => goToScene(2));
+</script>
+</body>
+</html>
