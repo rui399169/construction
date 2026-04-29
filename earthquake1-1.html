@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            background-color: #F5F1EB;
+            overflow: hidden;
+        }
+
+        .page {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("底纹.png"), url("点阵装饰.png");
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .deco-line {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: auto;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .map-image {
+            position: absolute;
+            width: 1800px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .detail-image {
+            position: absolute;
+            top: 200px;
+            right: 530px;
+            width: 500px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* 时间轴容器 */
+        .timeline-container {
+            width: 500px;
+            height: 400px;
+            left: -300px;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .timeline {
+            position: relative;
+            width: 500px;
+            height: 900px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 垂直中线 */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #a39494;
+            z-index: -1;
+        }
+
+        .timeline-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 120px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            padding: 0 2px;
+        }
+
+        .timeline-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #363131;
+            margin-bottom: 5px;
+        }
+
+        .timeline-date {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .timeline-connector {
+            position: absolute;
+            top: 40px;
+            width: 45%;
+            height: 1px;
+            background-color: #554f4f;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-connector {
+            right: 50%;
+        }
+
+        .timeline-item:nth-child(even) .timeline-connector {
+            left: 50%;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            transform: translateX(-50%) rotate(45deg);
+            width: 29px;
+            height: 29px;
+            border: 1px solid #554f4f;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-marker:hover {
+            background-color: rgba(163, 39, 39, 0.1);
+        }
+
+        .timeline-marker.active {
+            background-color: #a32727;
+            border-color: #a32727;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page">
+        <img class="deco-line" src="线条装饰地震.png" alt="装饰线条">
+        <img class="map-image" src="中华人民共和国 1.png" alt="地震地图">
+        <img class="detail-image" src="建筑标志.png" alt="建筑标志">
+        <div class="timeline-container">
+            <div class="timeline">
+                <!-- 岐山地震 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-title">岐山地震</div>
+                        <div class="timeline-date">公元前780年</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-marker" data-event="qishan"></div>
+                </div>
+                <!-- 陇西地震 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-title">陇西地震</div>
+                        <div class="timeline-date">公元138年</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-marker" data-event="longxi"></div>
+                </div>
+                <!-- 洪洞赵城地震 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-title">洪洞赵城地震</div>
+                        <div class="timeline-date">公元1303年</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-marker" data-event="hongtong"></div>
+                </div>
+                <!-- 华县大地震 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-title">华县大地震</div>
+                        <div class="timeline-date">公元1556年</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-marker" data-event="huaxian"></div>
+                </div>
+                <!-- 泉州大地震 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-title">泉州大地震</div>
+                        <div class="timeline-date">公元1604年</div>
+                    </div>
+                    <div class="timeline-connector"></div>
+                    <div class="timeline-marker" data-event="quanzhou"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 点击 marker 跳转到详情页，携带事件参数
+        document.querySelectorAll('.timeline-marker').forEach(marker => {
+            marker.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event');
+                window.location.href = 'earthquake1-2.html?event=' + eventId;
+            });
+        });
+
+        // 向上滚动返回 earthquake1
+        window.addEventListener('wheel', function(e) {
+            if (e.deltaY < 0) {
+                window.location.href = 'earthquake1.html';
+            }
+        });
+        document.addEventListener('wheel', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", sans-serif;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .scene {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: #ffffff;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.6s linear, visibility 0s 0.6s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        .scene.active {
+            opacity: 1; visibility: visible;
+            transition: opacity 0.6s linear, visibility 0s 0s;
+        }
+
+        /* 场景1背景 */
+        #scene1::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('雨.GIF'), url('水背景1.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        #scene1 .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 场景2：视频背景 */
+        #scene2 .video-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        #scene2 .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 40px;
+        }
+
+        /* 场景1文字 */
+        .title {
+            color: #363131;
+            font-size: 50px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .line120 {
+            background: #5c5454;
+            width: 1100px;
+            height: 1px;
+            margin-bottom: 37px;
+        }
+        .text2 {
+            color: #4F5657;
+            font-size: 28px;
+            line-height: 1.8;
+            width: 1100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 场景1：水患概述 -->
+        <div id="scene1" class="scene active">
+            <div class="content">
+                <p class="title">水患与潮气，古建筑的持久考验</p>
+                <div class="line120"></div>
+                <p class="text2">
+                    水患与潮气，是古建筑面对的最广泛、也最持久的自然磨砺。中国地域辽阔、水系纵横，多雨潮湿地区遍布南北，而古建筑多以土木为骨，最易受水侵潮蚀之害。历史上，江河泛滥、暴雨积涝、山洪冲刷连绵不绝，皆能对建筑造成难以修复的创痕。面对侵蚀，古人发展出精妙的防水、防潮营造技艺，为后世留下了珍贵的防灾智慧。
+                </p>
+            </div>
+        </div>
+
+        <!-- 场景2：视频步骤 -->
+        <div id="scene2" class="scene">
+            <video class="video-bg" id="video1" src="算盘.mp4" muted playsinline preload="auto"></video>
+            <video class="video-bg" id="video2" src="时间.mp4" muted playsinline preload="auto" style="display:none;"></video>
+        </div>
+    </div>
+
+    <script>
+        const scenes = document.querySelectorAll('.scene');
+        const totalScenes = scenes.length;
+        let currentIndex = 0;
+        let isTransitioning = false;
+        let scene2Step = 0;
+
+        const video1 = document.getElementById('video1');
+        const video2 = document.getElementById('video2');
+        video2.style.display = 'none';
+
+        function setScene2Step(step) {
+            scene2Step = step;
+            if (step === 0) {
+                video1.style.display = 'block';
+                video1.currentTime = 0;
+                video1.play();
+                video2.pause();
+                video2.style.display = 'none';
+            } else if (step === 1) {
+                video1.pause();
+                video1.style.display = 'none';
+                video2.style.display = 'block';
+                video2.currentTime = 0;
+                video2.play();
+            } else if (step === 2) {
+                video1.pause();
+                video2.pause();
+                video1.style.display = 'none';
+                video2.style.display = 'none';
+            }
+        }
+
+        function switchToScene(index) {
+            if (index === currentIndex || isTransitioning || index < 0 || index >= totalScenes) return;
+            isTransitioning = true;
+            if (currentIndex === 1) {
+                setScene2Step(2);
+            }
+            scenes[currentIndex].classList.remove('active');
+            scenes[index].classList.add('active');
+            currentIndex = index;
+            if (index === 1) {
+                setScene2Step(0);
+            }
+            setTimeout(() => { isTransitioning = false; }, 600);
+        }
+
+        // 滚轮切换
+        window.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (isTransitioning) return;
+            const isDown = e.deltaY > 0;
+
+            if (currentIndex === 0) {
+                if (isDown) switchToScene(1);
+            } else if (currentIndex === 1) {
+                if (isDown) {
+                    if (scene2Step === 0) setScene2Step(1);
+                    else if (scene2Step === 1) {
+                        setScene2Step(2);
+                        setTimeout(() => {
+                            window.location.href = 'water2.html';
+                        }, 100);
+                    }
+                } else {
+                    if (scene2Step === 1) setScene2Step(0);
+                    else if (scene2Step === 0) switchToScene(0);
+                }
+            }
+        }, { passive: false });
+
+        // 触摸滑动
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: false });
+        window.addEventListener('touchend', (e) => {
+            if (isTransitioning) return;
+            const diff = touchStartY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) < 50) return;
+            const isDown = diff > 0;
+            if (currentIndex === 0 && isDown) switchToScene(1);
+            else if (currentIndex === 1) {
+                if (isDown) {
+                    if (scene2Step === 0) setScene2Step(1);
+                    else if (scene2Step === 1) {
+                        setScene2Step(2);
+                        setTimeout(() => {
+                            window.location.href = 'water2.html';
+                        }, 100);
+                    }
+                } else {
+                    if (scene2Step === 1) setScene2Step(0);
+                    else if (scene2Step === 0) switchToScene(0);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

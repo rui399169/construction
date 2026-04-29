@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "FZXiaoBiaoSong-B05S";
+            overflow: hidden;
+            background: #fff;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .scene {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: #fff;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0s 0.5s;
+            overflow: hidden;
+        }
+        .scene.active {
+            opacity: 1; visibility: visible;
+            transition: opacity 0.5s ease, visibility 0s 0s;
+        }
+        .background {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: 0;
+        }
+        .content {
+            position: relative; z-index: 1;
+            width: 100%; height: 100%;
+        }
+
+        .section-title {
+            position: absolute;
+            top: 50px;
+            left: 40px;
+            font-size: 52px;
+            color: #000;
+        }
+        .fade-in { opacity: 0; transition: opacity 0.8s ease; }
+        .fade-in.active { opacity: 1; }
+        .scale-in { opacity: 0; transform: scale(0.5); transition: all 0.8s ease; }
+        .scale-in.active { opacity: 1; transform: scale(1); }
+
+        /* 场景1 */
+        #scene1 .text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1000px; font-size: 60px;
+            text-align: center; line-height: 1.5; color: #000;
+        }
+        #scene1 .image3 {
+            position: absolute; top: 550px; left: 1300px;
+            width: 211px; height: 264px;
+            cursor: pointer; transition: transform 0.3s;
+        }
+        #scene1 .image3:hover { transform: scale(1.1); }
+
+        /* 场景2（印斗式动画） */
+        #scene2 .image85 {
+            position: absolute;
+            top: 228px; left: -250px;
+            width: auto;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #scene2 .image85.shrunk {
+            transform: scale(0.5);
+            top: 200px;
+            left: -500px;
+        }
+        #scene2 .image74 {
+            position: absolute;
+            top: 600px; right: -500px;
+            transform: translate(-50%, -50%);
+            width: 1100px;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #scene2 .image74.visible {
+            opacity: 1;
+        }
+        #scene2 .desc-text {
+            position: absolute;
+            top: 230px; left: 650px;
+            transform: translateX(-50%);
+            width: 1214px;
+            font-size: 32px; line-height: 1.5;
+            color: #000; text-align: left;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene2 .desc-text.visible {
+            opacity: 1;
+        }
+
+        /* 场景3（朝筑式动画） */
+        #scene3 .image86 {
+            position: absolute;
+            top: 320px; left: 0px;
+            width: 1761px; height: 615px;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #scene3 .image86.shrunk {
+            transform: scale(0.6);
+            top: 480px;
+            left: -400px;
+        }
+        #scene3 .image76 {
+            position: absolute;
+            top: 550px; right: -500px;
+            transform: translate(-50%, -50%) scale(0.5);
+            width: 80%;
+            max-width: 1100px;
+            height: auto;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #scene3 .image76.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #scene3 .desc-text {
+            position: absolute;
+            top: 230px; left: 650px;
+            transform: translateX(-50%);
+            width: 1214px;
+            font-size: 32px; line-height: 1.5;
+            color: #000; text-align: left;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene3 .desc-text.visible {
+            opacity: 1;
+        }
+
+        /* 场景4（坐吻式动画） */
+        #scene4 .image89 {
+            position: absolute;
+            top: 200px; left: 0px;
+            width: 1300px;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #scene4 .image89.shrunk {
+            transform: scale(0.8);
+            top: 100px;
+            left: -200px;
+            opacity: 0.6;
+        }
+        #scene4 .image89.hidden {
+            opacity: 0;
+            transform: scale(0);
+        }
+        #scene4 .desc-text {
+            position: absolute;
+            top: 230px; left: 1200px;
+            transform: translateX(-50%);
+            width: 800px;
+            font-size: 32px; line-height: 1.5;
+            color: #000; text-align: left;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene4 .desc-text.visible { opacity: 1; }
+        #scene4 .final-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 64px;
+            line-height: 1.5;
+            color: #000;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene4 .final-text.visible { opacity: 1; }
+
+        /* 场景5（城壕原理动画） */
+        #scene5 .image91, #scene5 .image92 {
+            position: absolute;
+            top: 150px; left: 100px;
+            width: 800px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene5 .image91.visible, #scene5 .image92.visible { opacity: 1; }
+        #scene5 .image92 {
+            top: 100px; left: 1000px;
+            width: 600px;
+        }
+        #scene5 .desc-text {
+            position: absolute;
+            top: 50%; left: 1300px;
+            transform: translateX(-50%);
+            width: 600px;
+            font-size: 32px; line-height: 1.5;
+            color: #000; text-align: left;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene5 .desc-text.visible { opacity: 1; }
+        #scene5 .final-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 1500px;
+            font-size: 54px;
+            line-height: 1.5;
+            color: #000;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene5 .final-text.visible { opacity: 1; }
+
+        /* 场景6（最终总结） */
+        #scene6 .final-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 1500px;
+            font-size: 54px;
+            line-height: 1.5;
+            color: #000;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #scene6 .final-text.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 场景1：开场提示 -->
+    <div id="scene1" class="scene active">
+        <img src="火灾背景5.png" class="background">
+        <div class="content">
+            <div class="text">守城官提示：「木构是建筑的骨架，也是最易燃的部分！5000年前的古人，就会用草拌泥涂在木柱上隔绝火源防火！」</div>
+            <img src="草伴泥.png" class="image3" onclick="switchToScene(1)">
+        </div>
+    </div>
+
+    <!-- 场景2：印斗式马头墙（多步动画） -->
+    <div id="scene2" class="scene">
+        <img src="火灾背景3.png" class="background">
+        <div class="content">
+            <div class="section-title">关卡 二：空间阻断</div>
+            <img src="马头墙.png" class="image85" id="mainImage85">
+            <img src="空间阻断.png" class="image74" id="mainImage74">
+            <div class="desc-text" id="mainDescText">印斗式即座头上端使用奋烧制成的透雕式"由"字纹或"田"字纹的方斗一样的砖，侧面看去，既像是一块金印，又像建筑斗拱中的斗，故称印斗式马头墙。</div>
+        </div>
+    </div>
+
+    <!-- 场景3：朝筑式马头墙（多步动画） -->
+    <div id="scene3" class="scene">
+        <img src="火灾背景3.png" class="background">
+        <div class="content">
+            <div class="section-title">关卡 二：空间阻断</div>
+            <img src="马头墙2.png" class="image86" id="mainImage86">
+            <img src="空间阻断2.png" class="image76" id="mainImage76">
+            <div class="desc-text" id="mainDescText5">朝筑式即用做成古代君臣朝会所用的狭长板子式样的砖做座头，有的是在座头处反放一块瓦片代表朝符，属于简扬型马头墙的一种，还有的将座头上翘的特别夸张形成朝筑样，以表达主人对进朝做官的热切期盼，显示主人志向高远。</div>
+        </div>
+    </div>
+
+    <!-- 场景4：坐吻式马头墙（多步动画） -->
+    <div id="scene4" class="scene">
+        <img src="火灾背景3.png" class="background">
+        <div class="content">
+            <div class="section-title">关卡 二：空间阻断</div>
+            <img src="马头墙3.png" class="image89" id="mainImage89">
+            <div class="desc-text" id="mainDescText6">坐吻式即座头由窑烧制成的吻兽构件做成，常见的有哺鸡、鳌鱼、天狗等。吻兽一般常见于北方建筑之上，而马头墙上镶吻兽，也体现了南北文化的融合，吻兽可以显示房屋主人的高贵，另有避灾祈福的意味。</div>
+            <div class="final-text" id="finalSummary">以高出屋面的砖石墙体，<br>阻断火势跨屋面蔓延，<br>是民间最具代表性的防火设计</div>
+        </div>
+    </div>
+
+    <!-- 场景5：城壕原理（多步动画） -->
+    <div id="scene5" class="scene">
+        <img src="火灾背景3.png" class="background">
+        <div class="content">
+            <div class="section-title">关卡 二：空间阻断</div>
+            <img src="防火原理1.png" class="image91" id="mainImage91">
+            <img src="空间阻断3.png" class="image92" id="mainImage92">
+            <div class="desc-text" id="mainDescText7">城壕是为加强城市城墙防御而围绕城墙修筑的人工壕沟，一般位于城市城墙外侧，又称"濠"、城濠、护城河、护龙河等。</div>
+            <div class="final-text" id="finalSummary5">城市城壕在城市防火、灭火中的作用相对于城墙而言更大。<br>一方面，城市城壕可以充当城市防火隔离带。<br>另一方面，城市城壕可以为灭火提供充足的水源。</div>
+        </div>
+    </div>
+
+    <!-- 场景6：最终总结（无标题，下滑浮现文字，再下滑跳转fire4） -->
+    <div id="scene6" class="scene">
+        <img src="火灾背景4.png" class="background">
+        <div class="content">
+            <div class="final-text" id="finalSummary6">
+                守城官提示：「高出屋面的马头墙，<br>
+                是徽州古人的防火智慧！<br>
+                能完美阻挡火势跨屋面蔓延，<br>
+                是民间最经典的防火墙设计！」
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const scenes = document.querySelectorAll('.scene'); // 6个场景
+    const totalScenes = scenes.length;
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let scene2Step = 0, scene3Step = 0, scene4Step = 0, scene5Step = 0, scene6Step = 0;
+
+    // ===== 场景2 =====
+    function resetScene2Step0() {
+        const img85 = document.getElementById('mainImage85');
+        const img74 = document.getElementById('mainImage74');
+        const text = document.getElementById('mainDescText');
+        if (img85) { img85.classList.remove('shrunk'); img85.classList.add('scale-in'); void img85.offsetWidth; img85.classList.add('active'); }
+        if (img74) img74.classList.remove('visible');
+        if (text) text.classList.remove('visible');
+        scene2Step = 0;
+    }
+    function advanceScene2Step1() {
+        document.getElementById('mainImage85')?.classList.add('shrunk');
+        document.getElementById('mainImage74')?.classList.add('visible');
+        scene2Step = 1;
+    }
+    function advanceScene2Step2() {
+        document.getElementById('mainDescText')?.classList.add('visible');
+        scene2Step = 2;
+    }
+
+    // ===== 场景3 =====
+    function resetScene3Step0() {
+        const img86 = document.getElementById('mainImage86');
+        const img76 = document.getElementById('mainImage76');
+        const text = document.getElementById('mainDescText5');
+        if (img86) { img86.classList.remove('shrunk'); img86.classList.add('scale-in'); void img86.offsetWidth; img86.classList.add('active'); }
+        if (img76) img76.classList.remove('visible');
+        if (text) text.classList.remove('visible');
+        scene3Step = 0;
+    }
+    function advanceScene3Step1() {
+        document.getElementById('mainImage86')?.classList.add('shrunk');
+        document.getElementById('mainImage76')?.classList.add('visible');
+        scene3Step = 1;
+    }
+    function advanceScene3Step2() {
+        document.getElementById('mainDescText5')?.classList.add('visible');
+        scene3Step = 2;
+    }
+
+    // ===== 场景4 =====
+    function resetScene4Step0() {
+        const img89 = document.getElementById('mainImage89');
+        const desc = document.getElementById('mainDescText6');
+        const final = document.getElementById('finalSummary');
+        if (img89) { img89.classList.remove('shrunk', 'hidden'); img89.classList.add('scale-in'); void img89.offsetWidth; img89.classList.add('active'); }
+        if (desc) desc.classList.remove('visible');
+        if (final) final.classList.remove('visible');
+        scene4Step = 0;
+    }
+    function advanceScene4Step1() {
+        document.getElementById('mainImage89')?.classList.add('shrunk');
+        document.getElementById('mainDescText6')?.classList.add('visible');
+        scene4Step = 1;
+    }
+    function advanceScene4Step2() {
+        const img89 = document.getElementById('mainImage89');
+        if (img89) img89.classList.add('hidden');
+        document.getElementById('mainDescText6')?.classList.remove('visible');
+        document.getElementById('finalSummary')?.classList.add('visible');
+        scene4Step = 2;
+    }
+
+    // ===== 场景5 =====
+    function resetScene5Step0() {
+        const img91 = document.getElementById('mainImage91');
+        const img92 = document.getElementById('mainImage92');
+        const desc = document.getElementById('mainDescText7');
+        const final = document.getElementById('finalSummary5');
+        if (img91) img91.classList.remove('visible');
+        if (img92) img92.classList.remove('visible');
+        if (desc) desc.classList.remove('visible');
+        if (final) final.classList.remove('visible');
+        scene5Step = 0;
+    }
+    function advanceScene5Step1() {
+        document.getElementById('mainImage91')?.classList.add('visible');
+        document.getElementById('mainDescText7')?.classList.add('visible');
+        scene5Step = 1;
+    }
+    function advanceScene5Step2() {
+        document.getElementById('mainDescText7')?.classList.remove('visible');
+        document.getElementById('mainImage92')?.classList.add('visible');
+        scene5Step = 2;
+    }
+    function advanceScene5Step3() {
+        document.getElementById('mainImage91')?.classList.remove('visible');
+        document.getElementById('mainImage92')?.classList.remove('visible');
+        document.getElementById('finalSummary5')?.classList.add('visible');
+        scene5Step = 3;
+    }
+
+    // ===== 场景6 =====
+    function resetScene6Step0() {
+        const final = document.getElementById('finalSummary6');
+        if (final) final.classList.remove('visible');
+        scene6Step = 0;
+    }
+    function advanceScene6Step1() {
+        document.getElementById('finalSummary6')?.classList.add('visible');
+        scene6Step = 1;
+    }
+
+    // 场景切换
+    function switchToScene(index) {
+        if (index === currentIndex || isTransitioning || index < 0 || index >= totalScenes) return;
+        isTransitioning = true;
+
+        if (currentIndex === 1) resetScene2Step0();
+        if (currentIndex === 2) resetScene3Step0();
+        if (currentIndex === 3) resetScene4Step0();
+        if (currentIndex === 4) resetScene5Step0();
+        if (currentIndex === 5) resetScene6Step0();
+
+        scenes[currentIndex].classList.remove('active');
+        scenes[index].classList.add('active');
+
+        if (index === 1) resetScene2Step0();
+        if (index === 2) resetScene3Step0();
+        if (index === 3) resetScene4Step0();
+        if (index === 4) resetScene5Step0();
+        if (index === 5) resetScene6Step0();
+
+        currentIndex = index;
+        setTimeout(() => { isTransitioning = false; }, 500);
+    }
+
+    // 滚轮事件
+    window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (currentIndex === 0) return;
+
+        const isDown = e.deltaY > 0;
+
+        if (currentIndex === 1) {
+            if (isDown) {
+                if (scene2Step === 0) advanceScene2Step1();
+                else if (scene2Step === 1) advanceScene2Step2();
+                else switchToScene(2);
+            } else {
+                if (scene2Step === 1) resetScene2Step0();
+                else if (scene2Step === 2) {
+                    document.getElementById('mainDescText')?.classList.remove('visible');
+                    scene2Step = 1;
+                }
+            }
+            return;
+        }
+
+        if (currentIndex === 2) {
+            if (isDown) {
+                if (scene3Step === 0) advanceScene3Step1();
+                else if (scene3Step === 1) advanceScene3Step2();
+                else switchToScene(3);
+            } else {
+                if (scene3Step === 1) resetScene3Step0();
+                else if (scene3Step === 2) {
+                    document.getElementById('mainDescText5')?.classList.remove('visible');
+                    scene3Step = 1;
+                } else switchToScene(1);
+            }
+            return;
+        }
+
+        if (currentIndex === 3) {
+            if (isDown) {
+                if (scene4Step === 0) advanceScene4Step1();
+                else if (scene4Step === 1) advanceScene4Step2();
+                else switchToScene(4);
+            } else {
+                if (scene4Step === 1) resetScene4Step0();
+                else if (scene4Step === 2) {
+                    const img89 = document.getElementById('mainImage89');
+                    if (img89) img89.classList.remove('hidden');
+                    document.getElementById('mainDescText6')?.classList.add('visible');
+                    document.getElementById('finalSummary')?.classList.remove('visible');
+                    scene4Step = 1;
+                } else switchToScene(2);
+            }
+            return;
+        }
+
+        if (currentIndex === 4) {
+            if (isDown) {
+                if (scene5Step === 0) advanceScene5Step1();
+                else if (scene5Step === 1) advanceScene5Step2();
+                else if (scene5Step === 2) advanceScene5Step3();
+                else switchToScene(5);
+            } else {
+                if (scene5Step === 1) resetScene5Step0();
+                else if (scene5Step === 2) {
+                    document.getElementById('mainImage92')?.classList.remove('visible');
+                    document.getElementById('mainDescText7')?.classList.add('visible');
+                    scene5Step = 1;
+                } else if (scene5Step === 3) {
+                    document.getElementById('finalSummary5')?.classList.remove('visible');
+                    document.getElementById('mainImage91')?.classList.add('visible');
+                    document.getElementById('mainImage92')?.classList.add('visible');
+                    scene5Step = 2;
+                } else switchToScene(3);
+            }
+            return;
+        }
+
+        if (currentIndex === 5) {
+            if (isDown) {
+                if (scene6Step === 0) advanceScene6Step1();
+                else window.location.href = 'fire4.html';
+            } else {
+                if (scene6Step === 1) resetScene6Step0();
+                else switchToScene(4);
+            }
+            return;
+        }
+
+        if (isDown) switchToScene(currentIndex + 1);
+        else switchToScene(currentIndex - 1);
+    }, { passive: false });
+
+    // 触摸滑动（逻辑与滚轮一致）
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: false });
+    window.addEventListener('touchend', (e) => {
+        if (currentIndex === 0) return;
+        const touchEndY = e.changedTouches[0].clientY;
+        const diff = touchStartY - touchEndY;
+        if (Math.abs(diff) < 30) return;
+        const isDown = diff > 0;
+
+        if (currentIndex === 1) {
+            if (isDown) {
+                if (scene2Step === 0) advanceScene2Step1();
+                else if (scene2Step === 1) advanceScene2Step2();
+                else switchToScene(2);
+            } else {
+                if (scene2Step === 1) resetScene2Step0();
+                else if (scene2Step === 2) {
+                    document.getElementById('mainDescText')?.classList.remove('visible');
+                    scene2Step = 1;
+                }
+            }
+            return;
+        }
+        if (currentIndex === 2) {
+            if (isDown) {
+                if (scene3Step === 0) advanceScene3Step1();
+                else if (scene3Step === 1) advanceScene3Step2();
+                else switchToScene(3);
+            } else {
+                if (scene3Step === 1) resetScene3Step0();
+                else if (scene3Step === 2) {
+                    document.getElementById('mainDescText5')?.classList.remove('visible');
+                    scene3Step = 1;
+                } else switchToScene(1);
+            }
+            return;
+        }
+        if (currentIndex === 3) {
+            if (isDown) {
+                if (scene4Step === 0) advanceScene4Step1();
+                else if (scene4Step === 1) advanceScene4Step2();
+                else switchToScene(4);
+            } else {
+                if (scene4Step === 1) resetScene4Step0();
+                else if (scene4Step === 2) {
+                    const img89 = document.getElementById('mainImage89');
+                    if (img89) img89.classList.remove('hidden');
+                    document.getElementById('mainDescText6')?.classList.add('visible');
+                    document.getElementById('finalSummary')?.classList.remove('visible');
+                    scene4Step = 1;
+                } else switchToScene(2);
+            }
+            return;
+        }
+        if (currentIndex === 4) {
+            if (isDown) {
+                if (scene5Step === 0) advanceScene5Step1();
+                else if (scene5Step === 1) advanceScene5Step2();
+                else if (scene5Step === 2) advanceScene5Step3();
+                else switchToScene(5);
+            } else {
+                if (scene5Step === 1) resetScene5Step0();
+                else if (scene5Step === 2) {
+                    document.getElementById('mainImage92')?.classList.remove('visible');
+                    document.getElementById('mainDescText7')?.classList.add('visible');
+                    scene5Step = 1;
+                } else if (scene5Step === 3) {
+                    document.getElementById('finalSummary5')?.classList.remove('visible');
+                    document.getElementById('mainImage91')?.classList.add('visible');
+                    document.getElementById('mainImage92')?.classList.add('visible');
+                    scene5Step = 2;
+                } else switchToScene(3);
+            }
+            return;
+        }
+        if (currentIndex === 5) {
+            if (isDown) {
+                if (scene6Step === 0) advanceScene6Step1();
+                else window.location.href = 'fire4.html';
+            } else {
+                if (scene6Step === 1) resetScene6Step0();
+                else switchToScene(4);
+            }
+            return;
+        }
+
+        if (isDown) switchToScene(currentIndex + 1);
+        else switchToScene(currentIndex - 1);
+    });
+
+    // 初始化
+    window.addEventListener('load', () => {
+        resetScene2Step0();
+        resetScene3Step0();
+        resetScene4Step0();
+        resetScene5Step0();
+        resetScene6Step0();
+    });
+</script>
+</body>
+</html>

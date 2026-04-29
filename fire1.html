@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #000;
+        }
+        .slider {
+            width: 100vw;
+            height: 100vh;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .section {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #section1 .quote {
+            font-size: 40px;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+        #section2 .desc {
+            font-size: 40px;
+            line-height: 1.6;
+            max-width: 900px;
+            padding: 0 40px;
+            text-align: justify;
+        }
+        #section3 .chart-area {
+            width: 90vw;
+            max-width: 1000px;
+            padding: 20px;
+        }
+            /* 只改变第四屏的覆盖层颜色 */
+         #section4 .overlay {
+             background: rgba(96, 0, 0, 0.2);  /* #600000，透明度60% */
+          }
+        .chart-title {
+            font-size: 48px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .bars-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        .labels {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            margin-top: 15px;
+            font-size: 20px;
+        }
+        .bars {
+            flex: 1;
+            max-width: 700px;
+        }
+        .bar-row {
+            display: flex;
+            height: 50px;
+            margin-bottom: 24px;
+        }
+        .bar-seg {
+            height: 100%;
+            margin-right: 2px;
+        }
+        .bar-palace { background: #831843; }
+        .bar-house { background: #9d174d; }
+        .bar-lightning { background: #be185d; }
+        .legend-row {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .legend-color {
+            width: 40px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .insight {
+            text-align: right;
+            font-size: 24px;
+            margin-top: 30px;
+            line-height: 1.8;
+        }
+        #section4 .start-btn {
+            width: 400px;
+            height: 100px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+            font-size: 48px;
+            color: #fff;
+            letter-spacing: 6px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .start-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="slider" id="slider">
+        <!-- 第一屏 -->
+        <div class="section" id="section1">
+            <img class="bg-image" src="火灾动画.png" alt="火灾场景">
+            <div class="overlay"></div>
+            <div class="content quote">
+                《宋史·英宗本纪》记载：<br>
+                "三年春，正月己卯，温州火，<br>
+                烧民屋万四千间，死者五千人。"
+            </div>
+        </div>
+        <!-- 第二屏 -->
+        <div class="section" id="section2">
+            <img class="bg-image" src="火灾动画2.png" alt="火灾背景">
+            <div class="overlay"></div>
+            <div class="content desc">
+                中国古代建筑以土木为核心骨架，木构、茅草、竹编等可燃材料遍布建筑内外，加之古代城市民居接栋连檐、街巷狭窄，火灾成为仅次于战乱、饥荒的重大民生与治理灾难，
+            </div>
+        </div>
+        <!-- 第三屏 -->
+        <div class="section" id="section3">
+            <img class="bg-image" src="火灾动画3.png" alt="统计背景">
+            <div class="overlay"></div>
+            <div class="content chart-area">
+                <h2 class="chart-title">中国历代火灾统计</h2>
+                <div class="bars-container">
+                    <div class="labels">
+                        <span>清朝</span><span>明朝</span><span>宋辽金元</span>
+                        <span>隋唐五代</span><span>魏晋南北朝</span><span>前后代</span>
+                    </div>
+                    <div class="bars">
+                        <div class="bar-row">
+                            <div class="bar-seg bar-palace" style="width: 57px;"></div>
+                            <div class="bar-seg bar-house" style="width: 653px;"></div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-seg bar-palace" style="width: 309px;"></div>
+                            <div class="bar-seg bar-house" style="width: 360px;"></div>
+                            <div class="bar-seg bar-lightning" style="width: 110px;"></div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-seg bar-palace" style="width: 297px;"></div>
+                            <div class="bar-seg bar-house" style="width: 398px;"></div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-seg bar-palace" style="width: 88px;"></div>
+                            <div class="bar-seg bar-house" style="width: 145px;"></div>
+                            <div class="bar-seg bar-lightning" style="width: 9px;"></div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-seg bar-palace" style="width: 47px;"></div>
+                            <div class="bar-seg bar-house" style="width: 76px;"></div>
+                            <div class="bar-seg bar-lightning" style="width: 9px;"></div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-seg bar-palace" style="width: 95px;"></div>
+                            <div class="bar-seg bar-house" style="width: 126px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-row">
+                    <span><span class="legend-color bar-palace"></span>宫殿寺庙</span>
+                    <span><span class="legend-color bar-house"></span>民房运船火药库</span>
+                    <span><span class="legend-color bar-lightning"></span>雷击</span>
+                </div>
+                <div class="insight">
+                    「南宋临安城一日大火，焚毁民房数万间，无数家庭倾家荡产」<br>
+                    「古代建筑以土木为骨、竹茅为顶，民居接栋连檐，火势一旦蔓延便无法阻挡」<br>
+                    「用火不慎、雷击、战火均会引发大火，仅正史记载的古代宫殿、寺庙火灾就达近 900 例」
+                </div>
+            </div>
+        </div>
+        <!-- 第四屏 -->
+        <div class="section" id="section4">
+            <img class="bg-image" src="火灾背景0.png" alt="开始背景">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="start-btn" id="startBtn">开&nbsp;&nbsp;&nbsp;始</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('slider');
+        const totalSlides = 4;
+        let current = 0;
+        let isTransitioning = false;
+
+        function goToSlide(index) {
+            if (index < 0 || index >= totalSlides || isTransitioning) return;
+            isTransitioning = true;
+            current = index;
+            slider.style.transform = `translateY(-${current * 100}vh)`;
+            setTimeout(() => { isTransitioning = false; }, 600);
+        }
+
+        // 滚轮切换
+        window.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY > 0) goToSlide(current + 1);
+            else goToSlide(current - 1);
+        }, { passive: false });
+
+        // 触摸滑动
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => touchStartY = e.touches[0].clientY);
+        window.addEventListener('touchend', (e) => {
+            const diff = touchStartY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 50) goToSlide(current + (diff > 0 ? 1 : -1));
+        });
+
+        // 开始按钮
+        document.getElementById('startBtn').addEventListener('click', () => {
+        window.location.href = 'fire2.html';
+        });
+    </script>
+</body>
+</html>

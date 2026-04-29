@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "FZXiaoBiaoSong-B05S", "SimSun", serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            min-height: 500vh;
+        }
+        .section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 1;
+        }
+        .section.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        .content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 背景公共处理 */
+        .content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+        }
+        #section-1 .content::before,
+        #section-2 .content::before,
+        #section-5 .content::before {
+            background-image: url('火灾背景2.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+        }
+        #section-1 .content,
+        #section-2 .content,
+        #section-5 .content {
+            background-color: #fff;
+        }
+        #section-3 .content::before,
+        #section-4 .content::before {
+            background-image: url('火灾背景1.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .text {
+            position: absolute;
+            top: 50px;
+            left: 40px;
+            font-size: 52px;
+            color: #000;
+        }
+
+        /* 第1页装饰图（补充位置） */
+        #section-1 .section-image {
+            position: absolute;
+            z-index: 1;
+        }
+        /* 第2页装饰图 */
+        #section-2 .section-image {
+            position: absolute;
+            left: -50px;
+            top: 50px;
+            width: 1800px;
+            z-index: 0;
+        }
+        #section-2 .text2 {
+            position: absolute;
+            top: 580px;
+            right: 100px;
+            width: 900px;
+            font-size: 28px;
+            color: #000;
+            text-align: right;
+        }
+
+        /* 第4页 */
+        #section-4 .text2 {
+            position: absolute;
+            top: 750px;           /* 从894px上移，防止超出屏幕 */
+            right: 100px;
+            width: 576px;
+            font-size: 32px;
+            color: #fff;
+            text-align: right;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #section-4 .legend {
+            position: absolute;
+            top: 431px;
+            left: 222px;
+            width: 138px;
+            height: 391px;
+            z-index: 0;
+        }
+
+        #section-4 .legend-line.vertical {
+            position: absolute;
+            top: 0; left: 0;
+            width: 12px; height: 391px;
+            background: #4a4a4a;
+        }
+
+        #section-4 .legend-line.horizontal {
+            position: absolute;
+            top: 0; left: 0;
+            width: 138px; height: 10px;
+            background: #4a4a4a;
+        }
+
+        #section-4 .labels {
+            position: absolute;
+            bottom: 171px;
+            left: 350px;
+            width: auto;
+        }
+
+        #section-4 .label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 135px;
+        }
+
+
+        #section-4 .label-text {
+            font-size: 32px;
+            color: #000;
+        }
+        
+        #section-4 .extra-image {
+            position: absolute;
+            top: 450px;         
+            left: 250px;
+            z-index: 0;        
+        }
+
+        /* 第5页补充装饰图样式 */
+        #section-5 .section-image {
+            position: absolute;
+            z-index: 0;
+        }
+        #section-5 .text2 {
+            position: absolute;
+            top: 100px;  
+            right: 100px;
+            width: 900px;
+            font-size: 32px;
+            color: #000;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section id="section-1" class="section active">
+            <div class="content">
+                <div class="text">关卡 一：源头阻燃</div>
+                <img class="section-image" src="土楼1.png" alt="土楼装饰图">
+            </div>
+        </section>
+        <section id="section-2" class="section">
+            <div class="content">
+                <div class="text">关卡 一：源头阻燃</div>
+                <div class="text2">
+                    以 "土能御火" 为核心，用夯土、土坯、<br>
+                    砖石墙体替代木骨泥墙，减少建筑可燃面积，形成防火围护
+                </div>
+                <img class="section-image" src="土楼2.png" alt="土楼装饰图">
+            </div>
+        </section>
+        <section id="section-3" class="section">
+            <div class="content">
+                <div class="text">关卡 一：源头阻燃</div>
+            </div>
+        </section>
+        <section id="section-4" class="section">
+            <div class="content">
+                <div class="text">关卡 一：源头阻燃</div>
+                <img class="extra-image" src="门细节.png" alt="门细节">
+                <div class="text2">
+                    针对木质城门的防火薄弱点，通过涂泥、<br>
+                    包裹铁皮隔绝火源，抵御火攻
+                </div>
+                <div class="legend">
+                    <div class="legend-line vertical"></div>
+                    <div class="legend-line horizontal"></div>
+                </div>
+                <div class="labels">
+                    <div class="label">
+                        <div class="label-line"></div>
+                        <div class="label-text">————铁皮</div>
+                    </div>
+                    <div class="label">
+                        <div class="label-line"></div>
+                        <div class="label-text">————木质材料</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="section-5" class="section">
+            <div class="content">
+                <div class="text">关卡 一：源头阻燃</div>
+                <div class="text2">
+                    以不燃陶瓦替代易燃茅草屋顶，<br>
+                    彻底消除屋顶这一最大起火与蔓延载体，<br>
+                    同步优化屋面坡度适配瓦顶防火需求
+                </div>
+                <img class="section-image" src="防火墙.png" alt="防火墙">
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const sections = document.querySelectorAll('.section');
+        const totalSections = sections.length;
+        let currentSection = 0;
+
+        window.addEventListener('scroll', () => {
+            const newSection = Math.min(Math.floor(window.scrollY / window.innerHeight), totalSections - 1);
+            if (newSection !== currentSection) {
+                sections[currentSection].classList.remove('active');
+                currentSection = newSection;
+                sections[currentSection].classList.add('active');
+            }
+        });
+
+        // 最后一页下滑跳转，增加防抖
+        let wheelTimer;
+        window.addEventListener('wheel', (e) => {
+            if (currentSection === totalSections - 1 && e.deltaY > 0) {
+                if (wheelTimer) return;
+                wheelTimer = setTimeout(() => {
+                    window.location.href = 'fire3.html';
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>

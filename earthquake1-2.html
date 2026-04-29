@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术 · 地震时间轴</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%;
+            font-family: "FZXiaoBiaoSong-B05S", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            background-color: #F5F1EB;
+            overflow: hidden;
+        }
+
+        .page {
+            width: 100vw; height: 100vh;
+            position: fixed; top: 0; left: 0;
+            display: flex; justify-content: center; align-items: center;
+            background-image: url("底纹.png"), url("点阵装饰.png");
+            background-position: center; background-size: cover; background-repeat: no-repeat;
+        }
+
+        .deco-line {
+            position: absolute; top: 0; right: 0;
+            width: 250px; height: auto; z-index: 5; pointer-events: none;
+        }
+
+        .map-image {
+            position: absolute; width: 1800px; z-index: 5; pointer-events: none;
+        }
+
+        .detail-image {
+            position: absolute; top: 200px; right: 530px;
+            width: 500px; z-index: 5; pointer-events: none;
+        }
+
+        /* 主布局：时间轴左侧 + 详情右侧 */
+        .main-layout {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: 30px;
+        }
+
+        /* ========== 时间轴 ========== */
+        .timeline-wrapper {
+            position: relative;
+            width: 520px;
+            height: 80vh;
+        }
+
+        .timeline-scroll {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 20px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .timeline-scroll::-webkit-scrollbar { display: none; }
+
+        .timeline {
+            position: relative;
+            width: 500px;
+            height: 900px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 2px; height: 100%;
+            background-color: #a39494;
+            z-index: -1;
+        }
+
+        .timeline-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 120px;
+        }
+
+        .timeline-item:nth-child(odd) { flex-direction: row-reverse; }
+        .timeline-item:nth-child(even) { flex-direction: row; }
+
+        .timeline-content {
+            width: 45%;
+            padding: 0 2px;
+        }
+        .timeline-title {
+            font-size: 32px;   /* 优化 */
+            font-weight: bold;
+            color: #363131;
+            margin-bottom: 5px;
+        }
+        .timeline-date {
+            font-size: 18px;   /* 优化 */
+            color: #666;
+        }
+
+        .timeline-connector {
+            position: absolute; top: 40px;
+            width: 45%; height: 1px;
+            background-color: #554f4f;
+        }
+        .timeline-item:nth-child(odd) .timeline-connector { right: 50%; }
+        .timeline-item:nth-child(even) .timeline-connector { left: 50%; }
+
+        .timeline-marker {
+            position: absolute; left: 50%; top: 30px;
+            transform: translateX(-50%) rotate(45deg);
+            width: 29px; height: 29px;
+            border: 1px solid #554f4f;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .timeline-marker:hover { background-color: rgba(163,39,39,0.1); }
+        .timeline-marker.active {
+            background-color: #a32727; border-color: #a32727;
+        }
+
+        /* ========== 右侧详情面板 ========== */
+        .detail-panel {
+            position: absolute;
+            left: 560px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: calc(100vw - 590px);
+            height: 691px;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .main-container {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            height: 691px;
+            z-index: 20;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .main-container.visible {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        /* 定位标（位置由JS动态调整） */
+        .marker-wrapper {
+            position: absolute;
+            left: 50px; top: 200px;
+            width: 90px; height: 90px;
+            animation: markerPulse 1.5s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes markerPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.12); opacity: 0.6; }
+        }
+
+        .ring-outer {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 1px solid #d93030; border-radius: 50%;
+        }
+        .ring-inner {
+            position: absolute; top: 12px; left: 12px;
+            width: calc(100% - 24px); height: calc(100% - 24px);
+            border: 1px solid #e85050; border-radius: 50%;
+        }
+        .core {
+            position: absolute; top: 50%; left: 50%;
+            width: 16px; height: 16px; background: #d93030;
+            border-radius: 50%; transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px rgba(217,48,48,0.8);
+        }
+        .cross-h {
+            position: absolute; top: 50%; left: 0;
+            width: 100%; height: 2px; background: #e85050;
+            transform: translateY(-50%);
+        }
+        .cross-v {
+            position: absolute; top: 0; left: 50%;
+            width: 2px; height: 100%; background: #e85050;
+            transform: translateX(-50%);
+        }
+
+        /* 组合（位置由JS动态调整） */
+        .combo {
+            position: absolute;
+            top: -8px;
+            left: 160px;
+            display: flex;
+            align-items: flex-start;
+            height: 691px;
+        }
+
+        .image-reveal {
+            width: 0;
+            height: 691px;
+            overflow: hidden;
+            flex-shrink: 0;
+            animation: revealImage 0.8s ease-out 0.3s forwards paused;
+        }
+        .main-container.visible .image-reveal { animation-play-state: running; }
+        @keyframes revealImage {
+            from { width: 0; }
+            to { width: 400px; }
+        }
+        .image-reveal img {
+            display: block; height: 100%; width: 500px;
+            object-fit: cover; object-position: left;
+        }
+
+        .quake-card {
+            flex-shrink: 0;
+            opacity: 0;
+            animation: fadeInCard 0.6s ease-out 0.6s forwards paused;
+        }
+        .main-container.visible .quake-card { animation-play-state: running; }
+        @keyframes fadeInCard {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ========== 卡片内部样式（已优化） ========== */
+        .frame5 { position: relative; width: 582px; height: 691px; }
+        .rectangle141 {
+            position: absolute; top: 0; left: 3px;
+            display: flex; flex-direction: column;
+            border: 1px solid #ccbeb5;
+            box-shadow: 0px 16px 25px -5px rgba(0,0,0,0.25);
+            background: rgba(233,228,213,0.9);
+            padding: 40px 45px 273px 45px;   /* 优化 */
+            width: 577px; height: 691px;
+        }
+        .autoWrapper3 { display: flex; align-items: flex-start; justify-content: space-between; padding-right: 7px; }
+        .autoWrapper { position: relative; margin-top: 54px; width: 286px; height: 54px; }
+        .autoWrapper .text {
+            position: absolute; top: -46px; left: 0;
+            display: flex; align-items: center;
+            width: 500px; height: 54px; color: #363131;
+            font-size: 44px;   /* 优化 */
+        }
+        .autoWrapper .text2 {
+            position: absolute; top: 0; left: 0;
+            display: flex; align-items: center;
+            width: 286px; height: 54px; color: rgba(54,49,49,0.55);
+            font-size: 15px;   /* 优化 */
+        }
+        .autoWrapper2 { position: relative; width: 186px; height: 54px; margin-top: 54px; }
+        .aMagnitude {
+            position: absolute; bottom: -54px; left: 71px;
+            display: flex; align-items: center; justify-content: flex-end;
+            width: 115px; height: 54px; color: rgba(54,49,49,0.55);
+            font-family: "Roboto Mono", sans-serif;
+            font-size: 14px;   /* 优化 */
+        }
+        .m70 {
+            position: absolute; top: 0; left: 0;
+            display: flex; align-items: center; justify-content: flex-end;
+            width: 186px; height: 54px; color: #a32727;
+            font-family: "Roboto Mono", sans-serif;
+            font-size: 60px;   /* 优化 */
+            font-weight: 500;
+        }
+        .vector36 { margin-top: 5px; margin-left: 3px; background: #c4b9b9; width: 491px; height: 1px; }
+        .autoWrapper4 { position: relative; margin-top: 41px; width: 312px; height: 54px; }
+        .aLocation {
+            position: absolute; top: -27px; left: 0;
+            display: flex; align-items: center;
+            width: 115px; height: 54px; color: rgba(54,49,49,0.55);
+            font-family: "Roboto Mono", sans-serif;
+            font-size: 14px;   /* 优化 */
+        }
+        .text3 {
+            position: absolute; top: 0; left: 0;
+            display: flex; align-items: center;
+            width: 312px; height: 54px; color: #363131;
+            font-size: 24px;
+        }
+        .lAt3444N {
+            position: absolute; bottom: -27px; left: 3px;
+            display: flex; align-items: center;
+            width: 181px; height: 54px; color: #8b867f;
+            font-family: "Roboto Mono", sans-serif; font-size: 14px;
+        }
+        .lNg10762N {
+            position: absolute; bottom: -27px; left: 131px;
+            display: flex; align-items: center;
+            width: 181px; height: 54px; color: #8b867f;
+            font-family: "Roboto Mono", sans-serif; font-size: 14px;
+        }
+        .text4 {
+            display: flex; align-items: center;
+            margin: 28px 0px 0px 6px; width: 488px; height: 45px;
+            color: #5f5955;
+            font-size: 16px;   /* 优化 */
+            line-height: 26px; /* 优化 */
+        }
+        .autoWrapper5 { position: relative; margin-top: 40px; width: 312px; height: 54px; }
+        .autoWrapper5 .text3 { color: #363131; font-size: 24px; }
+        .autoWrapper6 { position: absolute; top: 411px; left: 48px; width: 488px; height: 219px; }
+        .autoWrapper6 .frame {
+            position: absolute; top: 0; left: 0;
+            background: rgba(229,213,204,0.76); width: 488px; height: 217px;
+        }
+        .text5 {
+            position: absolute; top: 17px; left: 24px;
+            display: flex; align-items: flex-start;
+            width: 447px; height: 202px; color: rgba(0,0,0,0.59);
+            font-size: 15px;   /* 优化 */
+            line-height: 26px; /* 优化 */
+            overflow-y: auto;
+        }
+        .corner-top-left {
+            position: absolute; top: -1px; left: -1px;
+            width: 30px; height: 30px;
+            border-top: 3px solid #a32727; border-left: 3px solid #a32727;
+        }
+        .corner-top-right {
+            position: absolute; top: -1px; right: -1px;
+            width: 30px; height: 30px;
+            border-top: 3px solid #a32727; border-right: 3px solid #a32727;
+        }
+        .corner-bottom-left {
+            position: absolute; bottom: -1px; left: -1px;
+            width: 30px; height: 30px;
+            border-bottom: 3px solid #a32727; border-left: 3px solid #a32727;
+        }
+        .corner-bottom-right {
+            position: absolute; bottom: -1px; right: -1px;
+            width: 30px; height: 30px;
+            border-bottom: 3px solid #a32727; border-right: 3px solid #a32727;
+        }
+        .line103 {
+            position: absolute; top: 521px; left: -60px;
+            background: #a32727; width: 217px; height: 4px;
+            transform: rotate(90deg);
+        }
+        .frame4 {
+            position: absolute; top: 659px; left: 49px; z-index: 3;
+            width: 491px; height: 10px;
+            background: linear-gradient(to right, #a32727 15px, transparent 15px);
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <img class="deco-line" src="线条装饰地震.png" alt="装饰线条">
+        <img class="map-image" src="中华人民共和国 1.png" alt="地震地图">
+        <img class="detail-image" src="建筑标志.png" alt="建筑标志">
+
+        <div class="main-layout">
+            <!-- 时间轴 -->
+            <div class="timeline-wrapper">
+                <div class="timeline-scroll" id="scrollContainer">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-title">岐山地震</div>
+                                <div class="timeline-date">公元前780年</div>
+                            </div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-marker" data-event="qishan"></div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-title">陇西地震</div>
+                                <div class="timeline-date">公元138年</div>
+                            </div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-marker" data-event="longxi"></div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-title">洪洞赵城地震</div>
+                                <div class="timeline-date">公元1303年</div>
+                            </div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-marker" data-event="hongtong"></div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-title">华县大地震</div>
+                                <div class="timeline-date">公元1556年</div>
+                            </div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-marker" data-event="huaxian"></div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-title">泉州大地震</div>
+                                <div class="timeline-date">公元1604年</div>
+                            </div>
+                            <div class="timeline-connector"></div>
+                            <div class="timeline-marker" data-event="quanzhou"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详情面板 -->
+            <div class="detail-panel">
+                <div class="main-container" id="detailContainer">
+                    <div class="marker-wrapper" id="markerWrapper">
+                        <div class="ring-outer"></div>
+                        <div class="ring-inner"></div>
+                        <div class="core"></div>
+                        <div class="cross-h"></div>
+                        <div class="cross-v"></div>
+                    </div>
+                    <div class="combo" id="comboContainer">
+                        <div class="image-reveal">
+
+                        </div>
+                        <div class="quake-card" id="quakeCardContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 地震数据（含独立位置参数） ==========
+        const eventData = {
+            qishan: {
+                title: "岐山地震",
+                date: "公元前780年",
+                magnitude: "M6.5",
+                location: "陕西岐山",
+                lat: "34.44°N",
+                lng: "107.62°E",
+                brief: "中国历史上记载较早的一次强烈地震，发生于西周时期。",
+                details: "幽王二年，西周三川皆震。伯阳甫曰：“周将亡矣。夫天地之气，不失其序；若过其序，民乱之也。阳伏而不能出，阴迫而不能蒸，于是有地震。今三川实震，是阳失其所而填阴也。”——《国语·周语》",
+                markerTop: 230,
+                markerLeft: 300,
+                comboTop: -8,
+                comboLeft: 160
+            },
+            longxi: {
+                title: "陇西地震",
+                date: "公元138年",
+                magnitude: "M7.0",
+                location: "甘肃陇西（Longxi，Gansu）",
+                lat: "34.44°N",
+                lng: "107.62°E",
+                brief: "张衡发明的“候风地动仪”成功测定的一场地震。",
+                details: "京师及金城、陇西地震，二部山岸崩，地陷。夏国月戊戌遣光禄大夫案行金城、陇西，赐压死者年七岁以钱人二千，一家皆被害为收敛之，除今年田租，尤甚者勿收口赋。——《后汉书·本纪》\n\n京都、金城、陇西地震裂，城郭室屋多坏，压杀人。——《后汉书·五行志》\n\n阳嘉元年张衡造候风地动仪，尝一龙机发而地不觉动，京师学者咸怪其无征。后数日驿至，果地震陇西，于是皆服其妙。——《后汉书·张衡传》",
+                markerTop: 200,
+                markerLeft: 120,
+                comboTop: -8,
+                comboLeft: 160
+            },
+            hongtong: {
+                title: "洪洞赵城地震",
+                date: "公元1303年",
+                magnitude: "M8.0",
+                location: "山西洪洞、赵城一带",
+                lat: "36.27°N",
+                lng: "111.68°E",
+                brief: "元代发生的一次破坏性极大的地震，波及山西多地，造成重大人员伤亡。",
+                details: "至元七年八月辛卯，地大震，太原、平阳尤甚，坏民庐舍十万计，压死者二十余万人。——《元史·五行志》",
+                markerTop: 160,
+                markerLeft: 350,
+                comboTop: -20,
+                comboLeft: 190
+            },
+            huaxian: {
+                title: "华县大地震",
+                date: "公元1556年",
+                magnitude: "M8.3",
+                location: "陕西华县",
+                lat: "34.51°N",
+                lng: "109.74°E",
+                brief: "中国历史上死亡人数最多的一次地震，约83万人遇难。",
+                details: "嘉靖三十四年十二月十二日，山西、陕西、河南同时地震，声如雷，渭南、华州、朝邑、三原、蒲州等处尤甚。官吏、军民压死八十三万有奇。——《明史·五行志》",
+                markerTop: 200,
+                markerLeft: 300,
+                comboTop: 10,
+                comboLeft: 140
+            },
+            quanzhou: {
+                title: "泉州大地震",
+                date: "公元1604年",
+                magnitude: "M8.0",
+                location: "福建泉州沿海",
+                lat: "24.91°N",
+                lng: "118.61°E",
+                brief: "发生在明末的强烈地震，对福建沿海地区造成了严重破坏。",
+                details: "万历三十二年十一月初九夜，泉州大地震，声如雷，山崩地裂，房屋倾倒，城垣楼铺倾圮殆尽，压死军民无数。——《泉州府志》",
+                markerTop: 550,
+                markerLeft: 580,
+                comboTop: -30,
+                comboLeft: 200
+            }
+        };
+
+
+        const detailContainer = document.getElementById('detailContainer');
+        const quakeCard = document.getElementById('quakeCardContent');
+        const markerWrapper = document.getElementById('markerWrapper');
+        const comboContainer = document.getElementById('comboContainer');
+        const markers = document.querySelectorAll('.timeline-marker');
+        const scrollContainer = document.getElementById('scrollContainer');
+
+        function updateCard(eventId) {
+            const data = eventData[eventId];
+            if (!data) return;
+
+            // 设置定位标位置
+            markerWrapper.style.top = (data.markerTop || 200) + 'px';
+            markerWrapper.style.left = (data.markerLeft || 50) + 'px';
+            // 设置组合位置
+            comboContainer.style.top = (data.comboTop || -8) + 'px';
+            comboContainer.style.left = (data.comboLeft || 160) + 'px';
+
+            // 动态朝代判断
+            const dynasty = 
+                data.title.includes('洪洞') ? '元' : 
+                data.title.includes('华县') ? '明' : 
+                data.title.includes('泉州') ? '明' : 
+                data.title.includes('岐山') ? '西周' : '东汉';
+
+            quakeCard.innerHTML = `
+                <div class="frame5">
+                    <div class="corner-top-left"></div><div class="corner-top-right"></div>
+                    <div class="corner-bottom-left"></div><div class="corner-bottom-right"></div>
+                    <div class="rectangle141">
+                        <div class="autoWrapper3">
+                            <div class="autoWrapper">
+                                <p class="text">${data.title}</p>
+                                <p class="text2">${data.date}&nbsp;&nbsp;/&nbsp;&nbsp;${dynasty}</p>
+                            </div>
+                            <div class="autoWrapper2">
+                                <p class="m70">${data.magnitude}</p>
+                                <p class="aMagnitude">[MAGNITUDE]</p>
+                            </div>
+                        </div>
+                        <div class="vector36"></div>
+                        <div class="autoWrapper4">
+                            <p class="aLocation">[LOCATION]</p>
+                            <p class="text3">${data.location}</p>
+                            <p class="lAt3444N">LAT：${data.lat}</p>
+                            <p class="lNg10762N">LNG：${data.lng}</p>
+                        </div>
+                        <p class="text4">${data.brief}</p>
+                        <div class="autoWrapper5">
+                            <p class="aLocation">[DATA]</p>
+                            <p class="text3">史料记载</p>
+                        </div>
+                        <div class="autoWrapper6">
+                            <div class="frame"></div>
+                            <p class="text5">${data.details.replace(/\n/g, '<br/>')}</p>
+                        </div>
+                    </div>
+                    <div class="line103"></div>
+                    <div class="frame4"></div>
+                </div>
+            `;
+        }
+
+        function showDetail(eventId) {
+            markers.forEach(m => m.classList.remove('active'));
+            const activeMarker = document.querySelector(`[data-event="${eventId}"]`);
+            if (activeMarker) activeMarker.classList.add('active');
+            updateCard(eventId);
+            detailContainer.classList.add('visible');
+        }
+
+        markers.forEach(marker => {
+            marker.addEventListener('click', function() {
+                showDetail(this.getAttribute('data-event'));
+            });
+        });
+
+        // 滚轮交互：向上回 earthquake1.html，向下或时间轴底部跳转到 earthquake2.html
+        window.addEventListener('wheel', function(e) {
+            const isInScroll = scrollContainer.contains(e.target);
+            const detailVisible = detailContainer.classList.contains('visible');
+            if (e.deltaY < 0 && !detailVisible) {
+                window.location.href = 'earthquake1-1.html';
+                return;
+            }
+            if (e.deltaY > 0 && !detailVisible) {
+                if (!isInScroll) {
+                    window.location.href = 'earthquake2.html';
+                } else {
+                    const scrollBottom = scrollContainer.scrollTop + scrollContainer.clientHeight;
+                    if (scrollBottom >= scrollContainer.scrollHeight - 2) {
+                        window.location.href = 'earthquake2.html';
+                    }
+                }
+            }
+        });
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营造有道 | 御灾有术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: "FZXiaoBiaoSong-B05S";
+            overflow: hidden;
+            background-color: #F5F1EB;
+        }
+
+        .earthquake1 {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-image: url("底纹.png"), url("点阵装饰.png");
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .deco-line {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: auto;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .map-image {
+            position: absolute;
+            width: 1600px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .detail-image {
+            position: absolute;
+            top: 80px;
+            right: 100px;
+            width: 750px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* 左侧文字介绍（已调整） */
+        .group154 {
+            position: absolute;
+            top: 100px;
+            left: 27px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 688px;
+            height: 382px;
+            z-index: 10;
+        }
+        .rectangle151 {
+            margin-top: 360px;
+            background: #504949;
+            width: 16px;
+            height: 16px;
+            transform: rotate(-180deg);
+        }
+        .autoWrapper2 {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: stretch;
+        }
+        .group153 {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: stretch;
+            height: 60px;
+        }
+        .title {
+            display: flex;
+            align-items: center;
+            width: 519px;
+            height: 49px;
+            letter-spacing: 0;
+            color: #363131;
+            font-size: 30px;
+            margin: 0;
+            font-weight: bold;
+        }
+        .rectangle150 {
+            margin-left: 463px;
+            background: #5c5454;
+            width: 30px;
+            height: 9px;
+        }
+        .line120 {
+            margin-top: 0px;
+            margin-left: 3px;
+            background: #5c5454;
+            width: 490px;
+            height: 1px;
+        }
+        .autoWrapper {
+            position: relative;
+            margin-top: 37px;
+            margin-left: 3px;
+            width: 579px;
+            height: 285px;
+        }
+        .text2 {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 490px;
+            height: 285px;
+            letter-spacing: 0;
+            color: #4F5657;
+            font-size: 20px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .line121 {
+            position: absolute;
+            top: 270px;
+            left: -87px;
+            background: #837575;
+            width: 590px;
+            height: 1px;
+            transform: rotate(180deg);
+        }
+
+        /* 右侧数据卡片（已调整） */
+        .group145 {
+            position: absolute;
+            top: 500px;
+            left: 130px;
+            width: 300px;
+            z-index: 10;
+        }
+        .frame {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 56px 50px 85px 50px;
+            width: 500px;
+            height: 370px;
+            background-color: #f5f0e6;
+            border: 1px solid #d3c7b8;
+            position: relative;
+        }
+        .frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 8px;
+            background-color: #a83c3c;
+        }
+        .frame::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #a83c3c;
+        }
+        .data-item {
+            display: flex;
+            align-items: center;
+            align-self: stretch;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            position: relative;
+        }
+        .data-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: -0px;
+            left: 0px ;
+            width: 100%;
+            height: 1px;
+            background-color: #d3c7b8;
+        }
+        .data-label {
+            position: relative;
+            width: 200px;
+            height: 21px;
+            display: flex;
+            align-items: center;
+        }
+        .data-tag {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            align-items: center;
+            width: 115px;
+            height: 39px;
+            letter-spacing: 0;
+            color: rgba(54, 49, 49, 0.55);
+            font-family: "Roboto Mono", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+        .data-name {
+            display: flex;
+            align-items: center;
+            width: 194px;
+            height: 64px;
+            letter-spacing: 0;
+            color: #363131;
+            font-size: 18px;
+        }
+        .data-value {
+            display: flex;
+            align-items: center;
+            width: 200px;
+            height: 50px;
+            letter-spacing: 0;
+            color: #363131;
+            font-size: 18px;
+        }
+
+        .chart-title {
+            position: absolute;
+            bottom: 100px;
+            right: 155px;
+            transform: translateX(-50%);
+            font-size: 28px;
+            color: #4f5657;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .line86 {
+            position: absolute;
+            bottom: 80px;
+            right: -700px;
+            transform: translateX(-50%);
+            background: #000000;
+            width: 1000px;
+            height: 1px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="earthquake1">
+        <img class="deco-line" src="线条装饰地震.png" alt="装饰线条">
+        <img class="map-image" src="中华人民共和国 1.png" alt="地震地图">
+        <img class="detail-image" src="地震频次图.png" alt="地震地图">
+
+        <div class="group154">
+            <div class="rectangle151"></div>
+            <div class="autoWrapper2">
+                <div class="group153">
+                    <p class="title">地震，在这片土地上从未停止</p>
+                    <div class="rectangle150"></div>
+                    <div class="line120"></div>
+                </div>
+                <div class="autoWrapper">
+                    <p class="text2">
+                        地震虽自古称为天灾，但却是地球上常有的一种现象。据地震学家古登保统计，地球上每年约有十五万次为普通人所能感受到的地震，其中亚洲所占比例很大。中国是一个多地震的国家，我国历史上有连绵不断的地震记载，从周文王八年（公元前十二世纪）到目前三千多年中，我国历史所载破坏性地震有八百八十余次之多，其中嘉靖三十四年十二月（公元一五五六年）关中地震，据史记载死伤八十万人。
+                    </p>
+                    <div class="line121"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group145">
+            <div class="frame">
+                <div class="data-item">
+                    <div class="data-label">
+                        <div class="data-tag">[TIME]</div>
+                        <div class="data-name">记载时间</div>
+                    </div>
+                    <div class="data-value">公元前12世纪——1956年</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">
+                        <div class="data-tag">[DATA]</div>
+                        <div class="data-name">记载地震次数</div>
+                    </div>
+                    <div class="data-value">880+</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">
+                        <div class="data-tag">[BAD]</div>
+                        <div class="data-name">最严重的地震</div>
+                    </div>
+                    <div class="data-value">嘉靖地震</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-label">
+                        <div class="data-tag">[DEAD]</div>
+                        <div class="data-name">死伤人数</div>
+                    </div>
+                    <div class="data-value">80万+</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="chart-title">中国古代各省地震频次图</p>
+        <div class="line86"></div>
+    </div>
+
+    <script>
+        window.addEventListener('wheel', function(e) {
+            if (e.deltaY > 0) {
+                window.location.href = 'earthquake1-1.html';
+            }
+        });
+        document.addEventListener('wheel', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
